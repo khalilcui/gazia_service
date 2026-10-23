@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gazia — Design, Digital &amp; Admin Services</title>
+  <meta name="author" content="Gazia" />
+  <meta name="description" content="Premium design, Canva templates, presentations, CVs and digital admin support. Based in Luton, England — available for new projects." />
+  <meta property="og:title" content="Gazia — Design, Digital &amp; Admin Services" />
+  <meta property="og:description" content="Design, digital and admin support delivered on time and made to look good." />
+  <meta property="og:site_name" content="Gazia Services" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#030817" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%231e6bff'/%3E%3Ctext x='32' y='43' font-family='Arial' font-weight='700' font-size='30' fill='white' text-anchor='middle'%3EG.%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Caveat:wght@600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <!-- Loader -->
+  <div id="loader" aria-hidden="true">
+    <div class="loader-mark"><span></span><span></span><span></span></div>
+    <p>Loading</p>
+  </div>
+
+  <!-- Full-page 3D moving background -->
+  <canvas id="bg3d" aria-hidden="true"></canvas>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <!-- Snake cursor -->
+  <canvas id="snake" aria-hidden="true"></canvas>
+
+  <!-- Navigation -->
+  <header class="nav" id="nav">
+    <a href="/" class="brand" data-go="home">
+      <span class="brand-mark" id="brandMark">G</span>
+      <span class="brand-text"><strong id="brandName">Gazia<span class="dot">.</span></strong><small>Design · Digital · Admin</small></span>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="/" data-go="home" class="active">Home</a>
+      <a href="/about" data-go="about" data-sec="about">About</a>
+      <a href="/skills" data-go="skills" data-sec="skills">Skills</a>
+      <a href="/services" data-go="services" data-sec="services">Services</a>
+      <a href="/work" data-go="work" data-sec="work">Work</a>
+      <a href="/feedback" data-go="feedback" data-sec="feedback">Feedback</a>
+      <a href="/contact" data-go="contact" data-sec="contact">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="icon-btn" id="themeBtn" aria-label="Change colour theme" title="Change colour theme"></button>
+      <a class="btn btn-primary btn-sm hire" href="/contact" data-go="contact"><span>Hire me</span></a>
+      <button class="nav-admin" id="adminNav" aria-label="Admin login"></button>
+      <button class="icon-btn menu-btn" id="menuBtn" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <!-- Theme picker -->
+  <div class="theme-panel" id="themePanel" role="dialog" aria-label="Choose a colour theme">
+    <div class="theme-head"><h4>Choose your colours</h4><button class="icon-btn" id="themeClose" aria-label="Close"></button></div>
+    <div class="theme-grid" id="themeGrid"></div>
+  </div>
+
+  <main id="main">
+    <!-- HOME -->
+    <section id="home" class="hero">
+      <div class="hero-backdrop" id="heroBackdrop" aria-hidden="true"></div>
+      <div class="hero-copy reveal">
+        <p class="badge" id="heroAvailable"><span class="pulse-dot"></span><span></span></p>
+        <p class="eyebrow" id="heroEyebrow"></p>
+        <h1 class="hero-name"><span id="heroFirst"></span><span class="grad" id="heroLast"></span></h1>
+        <p class="hero-intro" id="heroIntro"></p>
+        <div class="hero-cta">
+          <a href="/services" class="btn btn-primary" id="heroPrimary"></a>
+          <a href="/work" class="btn btn-outline" id="heroSecondary"></a>
+        </div>
+        <ul class="hero-meta" id="heroMeta"></ul>
+      </div>
+      <div class="hero-visual">
+        <canvas id="hero3d" aria-label="3D design studio screen with floating design tools"></canvas>
+        <div class="hero-photo" id="heroPhoto"></div>
+        <div class="platform" aria-hidden="true"><span></span><span></span><span></span></div>
+      </div>
+      <a href="/about" data-go="about" class="scroll-hint" aria-label="Scroll down"><span class="mouse"><span></span></span>Scroll down</a>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="section">
+      <div class="sec-head reveal"><p class="eyebrow" id="aboutEyebrow"></p><h2 class="sec-title" id="aboutHeading"></h2><p class="sec-sub" id="aboutSub"></p></div>
+      <div class="about-grid">
+        <div class="glass card story reveal">
+          <h3 class="story-hi" id="aboutGreeting"></h3>
+          <div id="aboutStory"></div>
+        </div>
+        <aside class="about-side">
+          <div class="glass card reveal"><h3 class="card-title"><i data-i="pin"></i> Quick facts</h3><dl class="facts" id="aboutFacts"></dl></div>
+          <a class="glass card cta-card tilt reveal" href="/contact" data-go="contact"><span class="cta-ico"><i data-i="sparkle"></i></span><strong>Have a project in mind?</strong><span class="muted">Let's make it look good.</span><i data-i="arrow"></i></a>
+        </aside>
+      </div>
+      <h3 class="sub-title reveal">My education timeline</h3>
+      <div class="timeline" id="eduTimeline"></div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" class="section">
+      <div class="sec-head center reveal">
+        <p class="eyebrow">Skills</p>
+        <h2 class="sec-title" id="skillsHeading"></h2>
+        <p class="sec-sub" id="skillsSub"></p>
+      </div>
+      <h3 class="flow-title reveal" id="featuredTitle"></h3>
+      <div class="coverflow reveal" id="skillFlow">
+        <button class="flow-arrow prev" id="skillPrev" aria-label="Previous skill"></button>
+        <div class="flow-stage" id="skillStage"></div>
+        <button class="flow-arrow next" id="skillNext" aria-label="Next skill"></button>
+        <div class="flow-floor" aria-hidden="true"></div>
+      </div>
+      <div class="skill-lists">
+        <div class="glass card reveal"><h3 class="card-title"><i data-i="users"></i> Professional Skills</h3><div class="bars" id="proSkills"></div></div>
+        <div class="glass card reveal"><h3 class="card-title"><i data-i="laptop"></i> IT &amp; Digital Skills</h3><div class="bars" id="itSkills"></div></div>
+      </div>
+    </section>
+
+    <!-- LANGUAGES -->
+    <section id="languages" class="section slim">
+      <div class="sec-head center reveal">
+        <p class="eyebrow">Languages</p>
+        <h2 class="sec-title" id="langHeading"></h2>
+        <p class="sec-sub" id="langSub"></p>
+      </div>
+      <div class="lang-grid" id="langGrid"></div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services" class="section">
+      <div class="sec-head center reveal">
+        <p class="eyebrow">Services</p>
+        <h2 class="sec-title" id="servicesHeading"></h2>
+        <p class="sec-sub" id="servicesSub"></p>
+      </div>
+      <div class="svc-grid" id="svcGrid"></div>
+      <div class="glass svc-cta reveal">
+        <div><h3 id="svcCtaTitle"></h3><p class="muted" id="svcCtaText"></p></div>
+        <a class="btn btn-primary" href="/contact" data-go="contact" id="svcCtaBtn"></a>
+      </div>
+    </section>
+
+    <!-- WORK -->
+    <section id="work" class="section">
+      <div class="sec-head center reveal">
+        <p class="eyebrow">Portfolio</p>
+        <h2 class="sec-title" id="workHeading"></h2>
+        <p class="sec-sub" id="workSub"></p>
+      </div>
+      <div class="filters reveal" id="workFilters" role="tablist" aria-label="Filter work by category"></div>
+      <div class="work-grid" id="workGrid"></div>
+      <div class="stats-band reveal" id="stats"></div>
+    </section>
+
+    <!-- FEEDBACK -->
+    <section id="feedback" class="section">
+      <div class="sec-head center reveal">
+        <p class="eyebrow">Feedback</p>
+        <h2 class="sec-title" id="fbHeading"></h2>
+        <p class="sec-sub" id="fbText"></p>
+      </div>
+      <div class="fb-grid">
+        <div class="glass fb-summary reveal" id="fbSummary"></div>
+        <form class="glass fb-form reveal" id="fbForm" novalidate>
+          <h3 class="card-title"><i data-i="chat"></i> Leave your feedback</h3>
+          <div class="fb-rate">
+            <span class="fb-label">Your rating</span>
+            <div class="stars-input" id="starsInput" role="radiogroup" aria-label="Rating"></div>
+            <span class="fb-rate-text" id="rateText">Tap a star</span>
+          </div>
+          <div class="fb-row">
+            <label class="field"><i data-i="user"></i><input id="fbName" name="name" maxlength="60" placeholder="Your name" required /></label>
+            <label class="field"><i data-i="brief"></i><input id="fbRole" name="role" maxlength="60" placeholder="Service used / your role (optional)" /></label>
+          </div>
+          <label class="field area"><i data-i="heart"></i><textarea id="fbMsg" name="message" rows="4" maxlength="800" placeholder="How was your experience working with Gazia?" required></textarea></label>
+          <input type="text" name="website" id="fbHp" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" />
+          <div class="fb-foot"><span class="fb-count" id="fbCount">0 / 800</span><p class="form-msg" id="fbMsgOut" role="status"></p></div>
+          <button class="btn btn-primary block" type="submit">Send feedback <i data-i="send"></i></button>
+        </form>
+      </div>
+      <div class="fb-wall reveal" id="fbWall"></div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section contact">
+      <div class="contact-info reveal">
+        <p class="eyebrow">Contact</p>
+        <h2 class="sec-title" id="contactHeading"></h2>
+        <p class="sec-sub" id="contactText"></p>
+        <ul class="contact-list" id="contactList"></ul>
+        <div class="socials" id="contactSocials"></div>
+      </div>
+      <form class="glass contact-form reveal" id="contactForm" novalidate>
+        <h3 class="card-title"><i data-i="mail"></i> Send a message</h3>
+        <div class="fb-row">
+          <label class="field"><i data-i="user"></i><input name="name" maxlength="80" placeholder="Name" required /></label>
+          <label class="field"><i data-i="mail"></i><input name="email" type="email" maxlength="120" placeholder="Email" required /></label>
+        </div>
+        <label class="field"><i data-i="brief"></i><input name="subject" maxlength="140" placeholder="Subject" /></label>
+        <label class="field area"><i data-i="chat"></i><textarea name="message" id="ctMsg" rows="5" maxlength="2000" placeholder="Message" required></textarea></label>
+        <input type="text" name="website" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" />
+        <div class="fb-foot"><span class="fb-count" id="ctCount">0 / 2000</span><p class="form-msg" id="formMsg" role="status"></p></div>
+        <button class="btn btn-primary block" type="submit">Send message <i data-i="send"></i></button>
+      </form>
+      <div class="contact-visual reveal" aria-hidden="true">
+        <canvas id="contact3d"></canvas>
+        <div class="motto glass" id="contactMotto"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href="/" data-go="home" class="brand"><span class="brand-mark sm">G</span><strong class="foot-name" id="footName">Gazia<span class="dot">.</span></strong></a>
+        <p class="muted" id="footTagline"></p>
+        <p class="foot-loc"><i data-i="pin"></i><span id="footLoc"></span></p>
+      </div>
+      <div><h4>Quick links</h4><ul class="foot-links">
+        <li><a href="/" data-go="home">Home</a></li><li><a href="/about" data-go="about">About</a></li>
+        <li><a href="/skills" data-go="skills">Skills</a></li><li><a href="/work" data-go="work">Work</a></li>
+        <li><a href="/feedback" data-go="feedback">Feedback</a></li></ul></div>
+      <div><h4>Services</h4><ul class="foot-links" id="footServices"></ul></div>
+      <div><h4>Contact</h4><p id="footEmail"></p><div class="socials" id="footSocials"></div>
+        <a class="btn btn-primary btn-sm" href="/contact" data-go="contact" id="footCta"></a></div>
+    </div>
+    <p class="foot-copy">© <span id="year"></span> <span id="footBrand">Gazia</span>. <span id="footNote"></span></p>
+  </footer>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <button class="icon-btn lb-close" id="lbClose" aria-label="Close"></button>
+    <figure><img id="lbImg" alt="" /><figcaption id="lbCap"></figcaption></figure>
+  </div>
+
+  <!-- Admin login -->
+  <div class="modal" id="loginModal" aria-hidden="true">
+    <form class="glass modal-box" id="loginForm">
+      <h3><i data-i="key"></i> Admin access</h3>
+      <p class="muted">Enter the admin password to edit the website.</p>
+      <input type="password" id="adminPass" placeholder="Password" autocomplete="current-password" />
+      <p class="form-msg" id="loginMsg"></p>
+      <div class="modal-actions"><button type="button" class="btn btn-outline" id="loginCancel">Cancel</button><button class="btn btn-primary">Unlock</button></div>
+    </form>
+  </div>
+  <aside class="admin-panel" id="adminPanel" aria-hidden="true"></aside>
+  <div class="toast" id="toast" role="status"></div>
+
+  <noscript><p style="padding:20px;text-align:center">Please enable JavaScript to view this website.</p></noscript>
+  <script src="/js/app.js" defer></script>
+</body>
+</html>

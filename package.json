@@ -1,0 +1,27 @@
+{
+  "name": "gazia-services",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Gazia Hussain — Design, Digital & Admin Services website with 3D themes, admin panel and feedback.",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/build.mjs --watch & tsx scripts/dev-server.ts",
+    "start": "node scripts/build.mjs && tsx scripts/dev-server.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p src/tsconfig.json"
+  },
+  "dependencies": {
+    "@vercel/blob": "^2.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "@types/three": "^0.186.0",
+    "esbuild": "^0.28.2",
+    "three": "^0.186.1",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  }
+}

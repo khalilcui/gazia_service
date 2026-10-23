@@ -1,0 +1,7 @@
+node_modules/
+public/js/
+.data/
+.vercel/
+.env*
+.DS_Store
+*.zip
