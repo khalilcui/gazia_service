@@ -169,7 +169,7 @@ export function render(content: Content): void {
   $("#servicesHeading").innerHTML = headingHtml(sv.heading);
   $("#servicesSub").textContent = sv.sub;
   $("#svcGrid").innerHTML = (sv.items || []).map((x, i) =>
-    '<article class="glass svc tilt reveal" id="' + esc(x.id || "service-" + i) + '"><span class="svc-num">' + String(i + 1).padStart(2, "0") + '</span><span class="svc-ico">' + icon(x.icon) + "</span><h3>" + esc(x.title) + "</h3><p>" + esc(x.text) + "</p>" +
+    '<article class="glass svc tilt reveal" style="--i:' + i + '" id="' + esc(x.id || "service-" + i) + '"><span class="svc-num">' + String(i + 1).padStart(2, "0") + '</span><span class="svc-ico">' + icon(x.icon) + "</span><h3>" + esc(x.title) + "</h3><p>" + esc(x.text) + "</p>" +
     ((x.points || []).filter(Boolean).length ? '<ul class="svc-points">' + x.points.filter(Boolean).map((pt) => "<li>" + icon("tick") + esc(pt) + "</li>").join("") + "</ul>" : "") +
     '<a class="svc-link" href="/contact" data-go="contact" data-svc="' + esc(x.title) + '">Ask about this ' + icon("arrow") + "</a></article>"
   ).join("");

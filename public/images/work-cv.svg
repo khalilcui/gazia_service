@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+<defs>
+<filter id="sh" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#0b1736" flood-opacity=".28"/></filter>
+<filter id="sh2" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#0b1736" flood-opacity=".22"/></filter>
+
+<linearGradient id="bg5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dff3ee"/><stop offset="1" stop-color="#eaf2ff"/></linearGradient>
+<linearGradient id="ph" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#99f6e4"/><stop offset="1" stop-color="#5eead4"/></linearGradient>
+
+</defs>
+
+<rect width="800" height="600" fill="url(#bg5)"/>
+<circle cx="120" cy="120" r="140" fill="#ffffff" opacity=".45"/><circle cx="700" cy="500" r="160" fill="#ffffff" opacity=".45"/>
+<g transform="translate(470 70) rotate(8)" filter="url(#sh2)"><rect width="300" height="424" rx="6" fill="#ffffff"/><rect width="300" height="70" rx="6" fill="#1e3a5f"/><rect x="24" y="96" width="180" height="10" rx="5" fill="#1e3a5f"/><rect x="24" y="120" width="250" height="5" rx="2.5" fill="#d6dbe4"/><rect x="24" y="132" width="230" height="5" rx="2.5" fill="#d6dbe4"/><rect x="24" y="144" width="240" height="5" rx="2.5" fill="#d6dbe4"/><rect x="24" y="156" width="200" height="5" rx="2.5" fill="#d6dbe4"/><rect x="24" y="168" width="250" height="5" rx="2.5" fill="#d6dbe4"/><rect x="24" y="180" width="210" height="5" rx="2.5" fill="#d6dbe4"/><rect x="24" y="192" width="180" height="5" rx="2.5" fill="#d6dbe4"/></g>
+<g transform="translate(220 50) rotate(-3)" filter="url(#sh)">
+  <rect width="360" height="500" rx="6" fill="#ffffff"/>
+  <rect width="128" height="500" rx="6" fill="#134e4a"/><rect x="122" width="6" height="500" fill="#134e4a"/>
+  <circle cx="64" cy="82" r="42" fill="url(#ph)"/><circle cx="64" cy="70" r="15" fill="#134e4a" opacity=".55"/><path d="M38 108 Q64 80 90 108" fill="#134e4a" opacity=".55"/>
+  <text x="20" y="160" font-family="Sora, 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="10" fill="#5eead4" letter-spacing="2">CONTACT</text>
+  <g fill="#d1fae5" opacity=".75"><rect x="20" y="172" width="90" height="5" rx="2.5"/><rect x="20" y="184" width="76" height="5" rx="2.5"/><rect x="20" y="196" width="84" height="5" rx="2.5"/></g>
+  <text x="20" y="232" font-family="Sora, 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="10" fill="#5eead4" letter-spacing="2">LANGUAGES</text>
+  <text x="20" y="250" font-family="Sora, 'Segoe UI', Arial, sans-serif" font-size="9" fill="#d1fae5">English · Urdu</text><text x="20" y="264" font-family="Sora, 'Segoe UI', Arial, sans-serif" font-size="9" fill="#d1fae5">Pahari</text>
+  <text x="20" y="298" font-family="Sora, 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="10" fill="#5eead4" letter-spacing="2">SKILLS</text>
+  <text x="20" y="318" font-family="Sora, 'Segoe UI', Arial, sans-serif" font-size="9" fill="#d1fae5">Canva</text><rect x="20" y="323" width="100" height="5" rx="2.5" fill="#ffffff" opacity=".2"/><rect x="20" y="323" width="93" height="5" rx="2.5" fill="#5eead4"/><text x="20" y="342" font-family="Sora, 'Segoe UI', Arial, sans-serif" font-size="9" fill="#d1fae5">Microsoft Office</text><rect x="20" y="347" width="100" height="5" rx="2.5" fill="#ffffff" opacity=".2"/><rect x="20" y="347" width="90" height="5" rx="2.5" fill="#5eead4"/><text x="20" y="366" font-family="Sora, 'Segoe UI', Arial, sans-serif" font-size="9" fill="#d1fae5">Social Media</text><rect x="20" y="371" width="100" height="5" rx="2.5" fill="#ffffff" opacity=".2"/><rect x="20" y="371" width="82" height="5" rx="2.5" fill="#5eead4"/><text x="20" y="390" font-family="Sora, 'Segoe UI', Arial, sans-serif" font-size="9" fill="#d1fae5">Organisation</text><rect x="20" y="395" width="100" height="5" rx="2.5" fill="#ffffff" opacity=".2"/><rect x="20" y="395" width="90" height="5" rx="2.5" fill="#5eead4"/>
+  <text x="150" y="70" font-family="Sora, 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="25" fill="#134e4a">AMINA KHAN</text>
+  <text x="150" y="92" font-family="Sora, 'Segoe UI', Arial, sans-serif" font-weight="600" font-size="12" fill="#0d9488" letter-spacing="1">MARKETING ASSISTANT</text>
+  <rect x="150" y="108" width="40" height="3" rx="1.5" fill="#0d9488"/>
+  <rect x="150" y="126" width="190" height="5" rx="2.5" fill="#d6dbe4"/><rect x="150" y="138" width="180" height="5" rx="2.5" fill="#d6dbe4"/><rect x="150" y="150" width="150" height="5" rx="2.5" fill="#d6dbe4"/>
+  <text x="150" y="190" font-family="Sora, 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="11" fill="#134e4a" letter-spacing="2">EXPERIENCE</text>
+  <circle cx="154" cy="210" r="4" fill="#0d9488"/><rect x="166" y="206" width="120" height="7" rx="3.5" fill="#334155"/><rect x="166" y="222" width="160" height="5" rx="2.5" fill="#d6dbe4"/><rect x="166" y="234" width="140" height="5" rx="2.5" fill="#d6dbe4"/><rect x="166" y="246" width="150" height="5" rx="2.5" fill="#d6dbe4"/>
+  <circle cx="154" cy="270" r="4" fill="#0d9488"/><rect x="166" y="266" width="100" height="7" rx="3.5" fill="#334155"/><rect x="166" y="282" width="150" height="5" rx="2.5" fill="#d6dbe4"/><rect x="166" y="294" width="160" height="5" rx="2.5" fill="#d6dbe4"/><rect x="166" y="306" width="120" height="5" rx="2.5" fill="#d6dbe4"/>
+  <text x="150" y="340" font-family="Sora, 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="11" fill="#134e4a" letter-spacing="2">EDUCATION</text>
+  <circle cx="154" cy="360" r="4" fill="#0d9488"/><rect x="166" y="356" width="130" height="7" rx="3.5" fill="#334155"/><rect x="166" y="372" width="140" height="5" rx="2.5" fill="#d6dbe4"/><rect x="166" y="384" width="110" height="5" rx="2.5" fill="#d6dbe4"/>
+  <circle cx="154" cy="406" r="4" fill="#0d9488"/><rect x="166" y="402" width="110" height="7" rx="3.5" fill="#334155"/><rect x="166" y="418" width="150" height="5" rx="2.5" fill="#d6dbe4"/><rect x="166" y="430" width="100" height="5" rx="2.5" fill="#d6dbe4"/>
+  <g fill="#ccfbf1"><rect x="150" y="452" width="56" height="18" rx="9"/><rect x="212" y="452" width="64" height="18" rx="9"/><rect x="282" y="452" width="50" height="18" rx="9"/></g>
+</g>
+
+</svg>

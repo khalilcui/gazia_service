@@ -793,3 +793,24 @@ body.light .ap-card { background: #fff; }
 .contact-list span { overflow-wrap: anywhere; }
 @media (max-width: 1100px) { .contact { grid-template-columns: 1fr 1.1fr; } }
 @media (max-width: 960px) { .contact { grid-template-columns: 1fr; } }
+
+/* Moving service cards: each card floats and sways in 3D on its own rhythm.
+   Uses the separate `translate`/`rotate` properties so the mouse tilt still works. */
+.svc-grid { perspective: 1400px; }
+.svc { animation: svcFloat 7s ease-in-out infinite; animation-delay: calc(var(--i, 0) * -0.9s); will-change: translate, rotate; }
+.svc:nth-child(even) { animation-name: svcFloatAlt; }
+.svc:hover, .svc:focus-within { animation-play-state: paused; }
+.svc-ico { animation: svcIcon 5s ease-in-out infinite; animation-delay: calc(var(--i, 0) * -0.6s); }
+.svc-num { animation: svcNum 7s ease-in-out infinite; animation-delay: calc(var(--i, 0) * -0.9s); }
+@keyframes svcFloat {
+  0%, 100% { translate: 0 0 0; rotate: 1 0 0 0deg; }
+  25% { translate: 0 -10px 0; rotate: 1 -1 0 3deg; }
+  50% { translate: 0 -16px 0; rotate: 0 1 0 0deg; }
+  75% { translate: 0 -6px 0; rotate: 1 1 0 3deg; }
+}
+@keyframes svcFloatAlt {
+  0%, 100% { translate: 0 -14px 0; rotate: 1 1 0 2deg; }
+  50% { translate: 0 2px 0; rotate: 1 -1 0 3deg; }
+}
+@keyframes svcIcon { 0%, 100% { translate: 0 0; rotate: 0deg; } 50% { translate: 0 -6px; rotate: -8deg; } }
+@keyframes svcNum { 0%, 100% { opacity: .55; translate: 0 0; } 50% { opacity: 1; translate: -6px 0; } }

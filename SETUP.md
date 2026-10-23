@@ -24,20 +24,11 @@
 
 ---
 
-## Step 1 — Copy the original images (2 minutes)
+## Step 1 — Project pictures (already included)
 
-Download these 6 files from the old website and save them in `public/images/` with the names shown:
+The five Work projects use original illustrations in `public/images/` (`work-graphic.svg`, `work-presentation.svg`, `work-canva.svg`, `work-marketing.svg`, `work-cv.svg`). To show real client work instead, upload a picture in Admin → Work, or replace these files.
 
-| Open this link | Save as |
-|---|---|
-| https://gazia-services-website.vercel.app/assets/hero-bg-C5WEVfg2.jpg | `public/images/hero-bg.jpg` |
-| https://gazia-services-website.vercel.app/assets/work-graphic-CW5W0IcE.jpg | `public/images/work-graphic.jpg` |
-| https://gazia-services-website.vercel.app/assets/work-presentation-B0RYTSOj.jpg | `public/images/work-presentation.jpg` |
-| https://gazia-services-website.vercel.app/assets/work-canva-CSmjnQ2F.jpg | `public/images/work-canva.jpg` |
-| https://gazia-services-website.vercel.app/assets/work-marketing-C_ZGSwNU.jpg | `public/images/work-marketing.jpg` |
-| https://gazia-services-website.vercel.app/assets/work-cv-DvTdl4XF.jpg | `public/images/work-cv.jpg` |
-
-Until they're there, the site loads them from the old website automatically. That stops working if the old deployment is replaced, so do this before deploying over it.
+Optional: save https://gazia-services-website.vercel.app/assets/hero-bg-C5WEVfg2.jpg as `public/images/hero-bg.jpg` for the faded picture behind the hero. Without it the hero simply shows the 3D scene.
 
 ## Step 2 — Deploy to Vercel
 

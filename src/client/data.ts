@@ -140,11 +140,11 @@ export const DEFAULT_CONTENT: Content = {
     heading: "Selected work.",
     sub: "Filter by category, then open a project to see the details.",
     items: [
-      { image: "images/work-graphic.jpg", title: "Brand Poster Set", category: "Graphic Designs", text: "", link: "" },
-      { image: "images/work-presentation.jpg", title: "Business Deck", category: "Presentations", text: "", link: "" },
-      { image: "images/work-canva.jpg", title: "Social Template Pack", category: "Canva Projects", text: "", link: "" },
-      { image: "images/work-marketing.jpg", title: "Campaign Report", category: "Digital Marketing", text: "", link: "" },
-      { image: "images/work-cv.jpg", title: "Modern CV Layout", category: "CV Designs", text: "", link: "" }
+      { image: "images/work-graphic.svg", title: "Brand Poster Set", category: "Graphic Designs", text: "", link: "" },
+      { image: "images/work-presentation.svg", title: "Business Deck", category: "Presentations", text: "", link: "" },
+      { image: "images/work-canva.svg", title: "Social Template Pack", category: "Canva Projects", text: "", link: "" },
+      { image: "images/work-marketing.svg", title: "Campaign Report", category: "Digital Marketing", text: "", link: "" },
+      { image: "images/work-cv.svg", title: "Modern CV Layout", category: "CV Designs", text: "", link: "" }
     ]
   },
   feedback: {
