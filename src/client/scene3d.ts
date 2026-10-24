@@ -1,11 +1,14 @@
 /* ==========================================================
-   3D scenes (Three.js)
-   - Background: paper sheets, colour-swatch fans, pencils,
-     slides, cubes, rings and gems drifting with the same
-     movement as the portfolio — they follow the mouse and
-     travel with the page while you scroll.
-   - Hero: a design studio screen with orbiting design tools.
-   - Contact: a creative desk (laptop, mug, papers, envelopes).
+   3D scenes (Three.js) — "creative flow" motion
+   - Background: design objects ride along waving flow lanes,
+     swerve away from the mouse like a magnet and spring back,
+     the whole field twists like a vortex as you scroll, paint-
+     brush ribbons wave behind them and confetti drifts down.
+   - Hero: the studio screen flips in, design tools fly in and
+     loop around it on a figure-eight path; the screen leans
+     toward the mouse.
+   - Contact: envelopes launch from the laptop like messages
+     being sent.
    Every accent colour follows the selected theme.
    ========================================================== */
 import * as THREE from "three";
@@ -13,12 +16,12 @@ import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.j
 import type { Theme } from "./types";
 
 type Slot = "a1" | "a2" | "a3";
-interface Mover { v: THREE.Vector3; r: THREE.Vector3; phase: number }
+interface Flow { lane: number; u: number; speed: number; dir: number; jy: number; jz: number; s: number; r: THREE.Vector3; off: THREE.Vector3 }
+interface Ribbon { mesh: THREE.Mesh; base: Float32Array; length: number; amp: number; freq: number; speed: number; twist: number }
 
 const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const small = window.innerWidth < 760;
 const DPR = Math.min(window.devicePixelRatio || 1, small ? 1.25 : 1.6);
-const UP = new THREE.Vector3(0, 1, 0);
 
 /* ---------------- Materials that follow the theme ---------------- */
 const mats: Record<Slot, THREE.MeshStandardMaterial[]> = { a1: [], a2: [], a3: [] };
@@ -80,27 +83,31 @@ function slideCard(bar: THREE.Material, chart: THREE.Material): THREE.Group {
   return g;
 }
 
-function bond(a: THREE.Vector3, b: THREE.Vector3, r: number, mat: THREE.Material): THREE.Mesh {
-  const dir = new THREE.Vector3().subVectors(b, a); const len = dir.length();
-  const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, 10), mat);
-  m.position.copy(a).add(b).multiplyScalar(0.5);
-  m.quaternion.setFromUnitVectors(UP, dir.normalize());
-  return m;
+/** A paint-brush stroke: a tapered ribbon that waves and twists. */
+function ribbon(length: number, width: number, mat: THREE.Material, amp: number, freq: number, speed: number, twist: number): Ribbon {
+  const geo = new THREE.PlaneGeometry(length, width, small ? 90 : 160, 1);
+  const base = Float32Array.from(geo.attributes.position.array as ArrayLike<number>);
+  const mesh = new THREE.Mesh(geo, mat);
+  const r: Ribbon = { mesh, base, length, amp, freq, speed, twist };
+  waveRibbon(r, 0);
+  return r;
 }
-
-/** A twisting ribbon of colour dots (the same motion as the portfolio's helix). */
-function helix(turns: number, mA: THREE.Material, mB: THREE.Material, mR: THREE.Material): THREE.Group {
-  const g = new THREE.Group(); const R = 0.9, steps = turns * 10;
-  for (let i = 0; i < steps; i++) {
-    const a = i * (Math.PI * 2 / 10), y = i * 0.32 - steps * 0.16;
-    const p1 = new THREE.Vector3(Math.cos(a) * R, y, Math.sin(a) * R);
-    const p2 = new THREE.Vector3(-Math.cos(a) * R, y, -Math.sin(a) * R);
-    const b1 = new THREE.Mesh(i % 3 ? new THREE.SphereGeometry(0.16, 14, 10) : rbox(0.28, 0.28, 0.28, 0.06), mA); b1.position.copy(p1);
-    const b2 = new THREE.Mesh(i % 3 ? new THREE.SphereGeometry(0.16, 14, 10) : rbox(0.28, 0.28, 0.28, 0.06), mB); b2.position.copy(p2);
-    g.add(b1, b2, bond(p1, p2, 0.04, mR));
+function waveRibbon(r: Ribbon, t: number): void {
+  const pos = r.mesh.geometry.attributes.position as THREE.BufferAttribute;
+  const a = pos.array as Float32Array;
+  for (let i = 0; i < a.length; i += 3) {
+    const x = r.base[i], y0 = r.base[i + 1];
+    const taper = Math.sin(Math.PI * (x / r.length + 0.5));
+    const ph = x * r.freq + t * r.speed;
+    const ang = Math.sin(ph * 0.5 + t * 0.4) * r.twist;
+    const w = y0 * (0.25 + 0.75 * taper);
+    a[i + 1] = Math.sin(ph) * r.amp + w * Math.cos(ang);
+    a[i + 2] = Math.cos(ph * 0.7) * r.amp * 0.8 + w * Math.sin(ang);
   }
-  return g;
+  pos.needsUpdate = true;
+  r.mesh.geometry.computeVertexNormals();
 }
+const brush = (slot: Slot, opacity: number) => themed(slot, { glow: 0.7, transparent: true, opacity, side: THREE.DoubleSide, roughness: 0.4, depthWrite: false });
 
 function lights(scene: THREE.Scene): THREE.PointLight[] {
   const amb = new THREE.AmbientLight(0xffffff, 0.6);
@@ -181,20 +188,32 @@ const drawMail: Draw = (c, W, H, t) => {
   c.fillStyle = "#fff"; c.font = "700 26px Manrope, Arial"; c.textAlign = "center"; c.fillText("Send", W - 132, 455);
 };
 
-/* ---------------- Background scene ---------------- */
+/* ---------------- Background scene: flow lanes ---------------- */
+const LANES = [
+  { y: 7.5, z: -6, amp: 2.2, f: 1, f2: 2, ph: 0, dir: 1 },
+  { y: 2.5, z: -8, amp: 2.8, f: 1.5, f2: 1, ph: 1.7, dir: -1 },
+  { y: -2.5, z: -5, amp: 2.4, f: 1, f2: 1.5, ph: 3.1, dir: 1 },
+  { y: -7.5, z: -9, amp: 2.0, f: 2, f2: 1, ph: 4.4, dir: -1 }
+];
+function lanePos(l: number, u: number, t: number, jy: number, jz: number, out: THREE.Vector3): THREE.Vector3 {
+  const L = LANES[l], a = u * Math.PI * 2;
+  return out.set((u * 2 - 1) * 22, L.y + jy + Math.sin(a * L.f + L.ph + t * 0.3) * L.amp, L.z + jz + Math.cos(a * L.f2 + L.ph) * 2.2);
+}
 const bgCanvas = document.getElementById("bg3d") as HTMLCanvasElement | null;
 const bg = {
   renderer: null as THREE.WebGLRenderer | null, scene: new THREE.Scene(), camera: new THREE.PerspectiveCamera(55, 1, 0.1, 100),
-  items: [] as THREE.Object3D[], helixes: [] as THREE.Group[], lights: [] as THREE.PointLight[], points: null as THREE.Points | null
+  flow: new THREE.Group(), items: [] as THREE.Object3D[], ribbons: [] as Ribbon[], lights: [] as THREE.PointLight[],
+  confetti: null as THREE.Points | null, fall: new Float32Array(0), sway: new Float32Array(0), twist: 0
 };
 if (bgCanvas) {
   bg.renderer = new THREE.WebGLRenderer({ canvas: bgCanvas, alpha: true, antialias: !small });
   bg.renderer.setPixelRatio(DPR);
   bg.camera.position.z = 16;
   bg.lights = lights(bg.scene);
+  bg.scene.add(bg.flow);
   const mA1 = themed("a1", { glow: 0.45 }), mA2 = themed("a2", { glow: 0.4 }), mA3 = themed("a3", { glow: 0.2, transparent: true, opacity: 0.75 });
   const gemMat = themed("a2", { glow: 0.5, flatShading: true, metalness: 0.3, roughness: 0.15, transparent: true, opacity: 0.85 });
-  const N = small ? 15 : 28;
+  const N = small ? 16 : 30;
   for (let i = 0; i < N; i++) {
     const kind = i % 7; let obj: THREE.Object3D;
     if (kind === 0) obj = docCard(mA1, mA2);
@@ -204,34 +223,42 @@ if (bgCanvas) {
     else if (kind === 4) obj = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.13, 16, 48), mA2);
     else if (kind === 5) obj = slideCard(mA1, mA2);
     else obj = new THREE.Mesh(new THREE.IcosahedronGeometry(0.55, 0), gemMat);
-    const s = 0.6 + Math.random() * 0.7; obj.scale.setScalar(s);
-    obj.position.set((Math.random() - 0.5) * 32, (Math.random() - 0.5) * 22, -3 - Math.random() * 9);
-    obj.rotation.set(Math.random() * 6, Math.random() * 6, Math.random() * 6);
-    const u: Mover = {
-      v: new THREE.Vector3((Math.random() - 0.5) * 0.032, (Math.random() - 0.5) * 0.032, (Math.random() - 0.5) * 0.012),
-      r: new THREE.Vector3((Math.random() - 0.5) * 0.03, (Math.random() - 0.5) * 0.034, (Math.random() - 0.5) * 0.024),
-      phase: Math.random() * 6.28
+    const lane = i % LANES.length;
+    const u: Flow = {
+      lane, u: (i / N + Math.random() * 0.08) % 1, speed: 0.0007 + Math.random() * 0.0008, dir: LANES[lane].dir,
+      jy: (Math.random() - 0.5) * 1.6, jz: (Math.random() - 0.5) * 2.5, s: 0.6 + Math.random() * 0.6,
+      r: new THREE.Vector3((Math.random() - 0.5) * 0.02, (Math.random() - 0.5) * 0.024, (Math.random() - 0.5) * 0.016),
+      off: new THREE.Vector3()
     };
+    obj.scale.setScalar(u.s);
+    obj.rotation.set(Math.random() * 6, Math.random() * 6, Math.random() * 6);
     obj.userData = u;
-    bg.scene.add(obj); bg.items.push(obj);
+    bg.flow.add(obj); bg.items.push(obj);
   }
-  const h1 = helix(small ? 2 : 3, mA1, mA2, mA3); h1.position.set(-15, 0, -8); h1.rotation.z = 0.5;
-  const h2 = helix(small ? 2 : 3, mA2, mA1, mA3); h2.position.set(15.5, 1, -9); h2.rotation.z = -0.45;
-  h1.userData = { spin: 0.012, par: 0.9 }; h2.userData = { spin: -0.012, par: 1.15 };
-  bg.scene.add(h1, h2); bg.helixes.push(h1, h2);
+  // Paint-brush ribbons sweeping across the field
+  const r1 = ribbon(40, 1.3, brush("a1", 0.5), 1.6, 0.22, 0.9, 1.4); r1.mesh.position.set(0, 4, -12); r1.mesh.rotation.z = 0.12;
+  const r2 = ribbon(40, 0.9, brush("a2", 0.42), 1.2, 0.3, -1.1, 1.8); r2.mesh.position.set(0, -4.5, -10); r2.mesh.rotation.z = -0.1;
+  const r3 = ribbon(36, 0.5, brush("a3", 0.35), 1.0, 0.4, 1.4, 2.2); r3.mesh.position.set(0, 0, -14); r3.mesh.rotation.z = 0.3;
+  bg.ribbons.push(r1, r2, r3); bg.flow.add(r1.mesh, r2.mesh, r3.mesh);
 
-  const P = small ? 260 : 600, pos = new Float32Array(P * 3);
-  for (let i = 0; i < P * 3; i++) pos[i] = (Math.random() - 0.5) * (i % 3 === 2 ? 20 : 40);
-  const pg = new THREE.BufferGeometry(); pg.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-  bg.points = new THREE.Points(pg, new THREE.PointsMaterial({ size: 0.06, transparent: true, opacity: 0.75, depthWrite: false }));
-  bg.scene.add(bg.points);
+  // Confetti drifting down
+  const P = small ? 180 : 420, pos = new Float32Array(P * 3), col = new Float32Array(P * 3);
+  bg.fall = new Float32Array(P); bg.sway = new Float32Array(P);
+  for (let i = 0; i < P; i++) {
+    pos[i * 3] = (Math.random() - 0.5) * 44; pos[i * 3 + 1] = (Math.random() - 0.5) * 28; pos[i * 3 + 2] = -2 - Math.random() * 16;
+    bg.fall[i] = 0.006 + Math.random() * 0.018; bg.sway[i] = Math.random() * 6.28;
+  }
+  const pg = new THREE.BufferGeometry();
+  pg.setAttribute("position", new THREE.BufferAttribute(pos, 3)); pg.setAttribute("color", new THREE.BufferAttribute(col, 3));
+  bg.confetti = new THREE.Points(pg, new THREE.PointsMaterial({ size: 0.13, vertexColors: true, transparent: true, opacity: 0.85, depthWrite: false }));
+  bg.scene.add(bg.confetti);
 }
 
 /* ---------------- Hero scene: design studio screen ---------------- */
 const heroCanvas = document.getElementById("hero3d") as HTMLCanvasElement | null;
 const hero = {
   renderer: null as THREE.WebGLRenderer | null, scene: new THREE.Scene(), camera: new THREE.PerspectiveCamera(38, 1, 0.1, 100),
-  monitor: new THREE.Group(), orbit: [] as THREE.Object3D[], lights: [] as THREE.PointLight[], helix: null as THREE.Group | null
+  monitor: new THREE.Group(), orbit: [] as THREE.Object3D[], lights: [] as THREE.PointLight[], ribbon: null as Ribbon | null, intro: -1, tilt: { x: 0, y: 0 }
 };
 if (heroCanvas) {
   hero.renderer = new THREE.WebGLRenderer({ canvas: heroCanvas, alpha: true, antialias: true });
@@ -256,19 +283,21 @@ if (heroCanvas) {
     const o: THREE.Object3D = k === 0 ? docCard(oA, oB) : k === 1 ? pencil(oB) : k === 2 ? new THREE.Mesh(rbox(0.6, 0.6, 0.6, 0.12), oA)
       : k === 3 ? swatchFan([oA, oB, oC, white]) : k === 4 ? new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.1, 14, 40), oB) : slideCard(oA, oB);
     o.scale.setScalar(k === 0 || k === 3 || k === 5 ? 0.55 : 0.75);
-    o.userData = { R: 3.4 + Math.random() * 1.3, a: (i / count) * Math.PI * 2, s: 0.22 + Math.random() * 0.22, y: (Math.random() - 0.5) * 3.8, bob: Math.random() * 6, spin: 0.008 + Math.random() * 0.016 };
+    const from = new THREE.Vector3((Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2, 1).normalize().multiplyScalar(16);
+    o.userData = { R: 3.6 + (i % 3) * 0.55, a: (i / count) * Math.PI * 2, s: 0.16 + Math.random() * 0.1, y: ((i % 4) - 1.5) * 0.7, spin: 0.008 + Math.random() * 0.016, from, delay: 0.25 + i * 0.09 };
+    o.position.copy(from);
     hero.scene.add(o); hero.orbit.push(o);
   }
-  const hh = helix(1, oA, oB, themed("a3", { glow: 0.2, transparent: true, opacity: 0.7 }));
-  hh.scale.setScalar(0.8); hh.position.set(-4.6, 0.6, -2.6); hh.rotation.z = 0.25;
-  hero.scene.add(hh); hero.helix = hh;
+  const hr = ribbon(16, 0.7, brush("a2", 0.55), 0.9, 0.5, 1.3, 1.6);
+  hr.mesh.position.set(0, -0.6, -3.2); hr.mesh.rotation.z = 0.22;
+  hero.scene.add(hr.mesh); hero.ribbon = hr;
 }
 
 /* ---------------- Contact scene: creative desk ---------------- */
 const contactCanvas = document.getElementById("contact3d") as HTMLCanvasElement | null;
 const desk = {
   renderer: null as THREE.WebGLRenderer | null, scene: new THREE.Scene(), camera: new THREE.PerspectiveCamera(36, 1, 0.1, 100),
-  lights: [] as THREE.PointLight[], floaters: [] as THREE.Object3D[], glow: null as THREE.Mesh | null, helix: null as THREE.Group | null,
+  lights: [] as THREE.PointLight[], floaters: [] as THREE.Object3D[], glow: null as THREE.Mesh | null, ribbon: null as Ribbon | null,
   visible: false, zoom: 1
 };
 if (contactCanvas) {
@@ -332,19 +361,18 @@ if (contactCanvas) {
   }
   plant.position.set(2.9, 0, -1.6); desk.scene.add(plant);
 
-  const hd = helix(2, themed("a1", { glow: 0.5 }), themed("a2", { glow: 0.45 }), themed("a3", { glow: 0.3, transparent: true, opacity: 0.6 }));
-  hd.scale.setScalar(0.65); hd.position.set(-3.2, 3.4, -3.4); hd.rotation.z = 0.15; desk.scene.add(hd); desk.helix = hd;
+  const dr = ribbon(14, 0.6, brush("a2", 0.5), 0.7, 0.55, 1.2, 1.8);
+  dr.mesh.position.set(-0.5, 4.2, -4); dr.mesh.rotation.z = 0.08; desk.scene.add(dr.mesh); desk.ribbon = dr;
 
-  // Floating envelopes
+  // Envelopes that launch from the laptop like messages being sent
   const flap = themed("a1", { glow: 0.35 });
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 5; i++) {
     const env = new THREE.Group();
     env.add(new THREE.Mesh(rbox(0.9, 0.6, 0.05, 0.03), paper));
     const shape = new THREE.Shape(); shape.moveTo(-0.45, 0.3); shape.lineTo(0.45, 0.3); shape.lineTo(0, -0.05); shape.closePath();
     const f = new THREE.Mesh(new THREE.ShapeGeometry(shape), flap); f.position.z = 0.03; env.add(f);
-    env.position.set(-2.2 + i * 1.6, 3.1 + Math.random() * 1.2, -1.2 - Math.random() * 1.2);
-    env.rotation.set(0.2, (Math.random() - 0.5) * 0.8, (Math.random() - 0.5) * 0.4);
-    env.userData = { base: env.position.y, ph: Math.random() * 6, spin: 0.006 + Math.random() * 0.01 };
+    env.scale.setScalar(0.001);
+    env.userData = { delay: i * 0.9, dur: 4.5, side: (i % 2 ? 1 : -1) * (0.6 + (i % 3) * 0.45) };
     desk.scene.add(env); desk.floaters.push(env);
   }
   if ("IntersectionObserver" in window) new IntersectionObserver((es) => { desk.visible = es[0].isIntersecting; }, { rootMargin: "100px" }).observe(contactCanvas);
@@ -359,7 +387,12 @@ function setTheme(t: Theme): void {
     mats[slot].forEach((m) => { m.color.copy(col); m.emissive = col.clone().multiplyScalar(m.userData.glow as number); });
   });
   [bg.lights, hero.lights, desk.lights].forEach((ls) => { if (ls.length) { ls[0].color.set(t.a1); ls[1].color.set(t.a2); } });
-  if (bg.points) (bg.points.material as THREE.PointsMaterial).color.set(t.light ? t.a1 : t.a3);
+  if (bg.confetti) {
+    const c = bg.confetti.geometry.attributes.color as THREE.BufferAttribute, arr = c.array as Float32Array;
+    const pal = [t.a1, t.a2, t.a3, t.light ? t.a1 : "#ffffff"].map((h) => new THREE.Color(h));
+    for (let i = 0; i < arr.length / 3; i++) { const k = pal[i % pal.length]; arr[i * 3] = k.r; arr[i * 3 + 1] = k.g; arr[i * 3 + 2] = k.b; }
+    c.needsUpdate = true;
+  }
   redrawAll();
 }
 function setScreen(title: string, text: string): void {
@@ -369,7 +402,11 @@ function setScreen(title: string, text: string): void {
 
 /* ---------------- Interaction & loop ---------------- */
 const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+const ndc = new THREE.Vector3(), hit = new THREE.Vector3(), tmp = new THREE.Vector3(), aim = new THREE.Vector3();
+let mouseActive = false;
+document.addEventListener("pointerleave", () => { mouseActive = false; });
 window.addEventListener("pointermove", (e) => {
+  mouseActive = e.pointerType === "mouse";
   mouse.tx = (e.clientX / window.innerWidth) * 2 - 1;
   mouse.ty = (e.clientY / window.innerHeight) * 2 - 1;
 }, { passive: true });
@@ -405,52 +442,86 @@ function loop(): void {
   const boost = Math.min(Math.abs(scrollVel) * 0.02, 1.6);
 
   if (bg.renderer) {
+    // Scroll twists the whole field like a vortex
+    bg.twist += (window.scrollY * 0.00045 - bg.twist) * 0.06;
+    bg.flow.rotation.z = bg.twist;
+    bg.flow.rotation.x = Math.sin(t * 0.15) * 0.08;
+    bg.flow.updateMatrixWorld();
+    // Mouse position on the plane the objects travel through, in the field's own space
+    ndc.set(mouse.tx, -mouse.ty, 0.5).unproject(bg.camera).sub(bg.camera.position).normalize();
+    const dist = (-7 - bg.camera.position.z) / ndc.z;
+    hit.copy(bg.camera.position).addScaledVector(ndc, dist);
+    bg.flow.worldToLocal(hit);
     if (!reduce) {
+      const speed = 1 + boost * 3;
       bg.items.forEach((o) => {
-        const u = o.userData as Mover, depth = 1.25 + (o.position.z + 12) / 10 * 0.6;
-        o.position.add(u.v);
-        o.position.y += Math.sin(t * 1.4 + u.phase) * 0.008 + scrollVel * pxToWorld * depth;
-        const spin = 1 + boost * 4;
-        o.rotation.x += u.r.x * spin; o.rotation.y += u.r.y * spin; o.rotation.z += u.r.z * spin;
-        if (o.position.x > 16) o.position.x = -16; if (o.position.x < -16) o.position.x = 16;
-        if (o.position.y > 12) o.position.y -= 24; if (o.position.y < -12) o.position.y += 24;
-        if (o.position.z > -2) u.v.z = -Math.abs(u.v.z); if (o.position.z < -12) u.v.z = Math.abs(u.v.z);
+        const u = o.userData as Flow;
+        u.u = (u.u + u.speed * u.dir * speed + 1) % 1;
+        lanePos(u.lane, u.u, t, u.jy, u.jz, tmp);
+        // Magnetic swerve away from the cursor, then spring back
+        const dx = tmp.x - hit.x, dy = tmp.y - hit.y, d = Math.hypot(dx, dy) || 1, R = 5;
+        const push = mouseActive && d < R ? (R - d) / R : 0;
+        aim.set((dx / d) * push * 3.4, (dy / d) * push * 3.4, push * 3);
+        u.off.lerp(aim, 0.08);
+        o.position.copy(tmp).add(u.off);
+        o.scale.setScalar(u.s * (1 + u.off.length() * 0.07));
+        o.rotation.x += u.r.x * speed; o.rotation.y += u.r.y * speed + push * 0.04; o.rotation.z += u.r.z * speed;
       });
-      bg.helixes.forEach((d) => {
-        d.rotation.y += (d.userData.spin as number) * (1 + boost * 5);
-        d.position.y += scrollVel * pxToWorld * (d.userData.par as number);
-        if (d.position.y > 20) d.position.y -= 40; if (d.position.y < -20) d.position.y += 40;
-      });
-      if (bg.points) { bg.points.rotation.y = t * 0.05; bg.points.position.y = (bg.points.position.y + scrollVel * pxToWorld * 0.6) % 20; }
+      bg.ribbons.forEach((r) => waveRibbon(r, t * (1 + boost)));
+      if (bg.confetti) {
+        const pa = bg.confetti.geometry.attributes.position as THREE.BufferAttribute, a = pa.array as Float32Array;
+        const lift = scrollVel * pxToWorld * 0.5;
+        for (let i = 0; i < bg.fall.length; i++) {
+          a[i * 3 + 1] += -bg.fall[i] * (1 + boost * 2) + lift;
+          a[i * 3] += Math.sin(t * 1.3 + bg.sway[i]) * 0.008;
+          if (a[i * 3 + 1] < -15) a[i * 3 + 1] += 30; else if (a[i * 3 + 1] > 15) a[i * 3 + 1] -= 30;
+        }
+        pa.needsUpdate = true;
+      }
     }
-    bg.camera.position.x = mouse.x * 2.2;
-    bg.camera.position.y = -mouse.y * 1.6;
+    bg.camera.position.x = mouse.x * 1.2;
+    bg.camera.position.y = -mouse.y * 0.9;
+    bg.camera.position.z = 16 - Math.min(boost, 1) * 1.2;
     bg.camera.lookAt(0, 0, 0);
     bg.renderer.render(bg.scene, bg.camera);
   }
 
   if (hero.renderer && window.scrollY < window.innerHeight * 1.2) {
-    if (!reduce) {
-      hero.monitor.rotation.y = -0.15 + Math.sin(t * 0.7) * 0.28 + mouse.x * 0.3;
-      hero.monitor.rotation.x = Math.sin(t * 0.5) * 0.05;
-      hero.monitor.position.y = 0.55 + Math.sin(t * 1.6) * 0.12;
-      hero.orbit.forEach((o) => {
-        const u = o.userData as { R: number; a: number; s: number; y: number; bob: number; spin: number };
-        u.a += u.s * 0.03;
-        o.position.set(Math.cos(u.a) * u.R, u.y + Math.sin(t * 1.6 + u.bob) * 0.3, Math.sin(u.a) * u.R * 0.7);
-        o.rotation.x += u.spin * 2; o.rotation.z += u.spin * 1.4;
-      });
-      if (hero.helix) hero.helix.rotation.y += 0.022;
-    }
-    hero.scene.rotation.x = mouse.y * 0.12;
-    hero.scene.rotation.y = mouse.x * 0.18;
+    if (hero.intro < 0) hero.intro = t;
+    const k = reduce ? 1 : Math.min(1, (t - hero.intro) / 1.6), ease = 1 - Math.pow(1 - k, 4);
+    // Screen flips in, then leans toward the mouse with a soft spring
+    hero.tilt.y += ((-0.18 + mouse.x * 0.45) - hero.tilt.y) * 0.06;
+    hero.tilt.x += ((mouse.y * 0.16) - hero.tilt.x) * 0.06;
+    hero.monitor.rotation.y = hero.tilt.y - (1 - ease) * Math.PI * 1.1;
+    hero.monitor.rotation.x = hero.tilt.x;
+    hero.monitor.scale.setScalar(1.18 * (0.55 + 0.45 * ease));
+    hero.monitor.position.y = 0.55 + (reduce ? 0 : Math.sin(t * 1.1) * 0.06);
+    hero.orbit.forEach((o) => {
+      const u = o.userData as { R: number; a: number; s: number; y: number; spin: number; from: THREE.Vector3; delay: number };
+      if (!reduce) u.a += u.s * 0.025;
+      // Figure-eight loop around the screen
+      tmp.set(Math.sin(u.a) * u.R * 1.15, u.y + Math.sin(2 * u.a) * u.R * 0.35, Math.cos(u.a) * u.R * 0.6);
+      const f = reduce ? 1 : Math.min(1, Math.max(0, (t - hero.intro - u.delay) / 1.2)), fe = 1 - Math.pow(1 - f, 3);
+      o.position.copy(u.from).lerp(tmp, fe);
+      if (!reduce) { o.rotation.x += u.spin * 2; o.rotation.z += u.spin * 1.4; }
+    });
+    if (hero.ribbon && !reduce) waveRibbon(hero.ribbon, t);
+    hero.scene.rotation.x = mouse.y * 0.06;
+    hero.scene.rotation.y = mouse.x * 0.08;
     hero.renderer.render(hero.scene, hero.camera);
   }
 
   if (desk.renderer && desk.visible) {
     if (!reduce) {
-      if (desk.helix) desk.helix.rotation.y += 0.015;
-      desk.floaters.forEach((f) => { const u = f.userData as { base: number; ph: number; spin: number }; f.position.y = u.base + Math.sin(t * 1.3 + u.ph) * 0.25; f.rotation.y += u.spin; });
+      if (desk.ribbon) waveRibbon(desk.ribbon, t);
+      desk.floaters.forEach((f, i) => {
+        const u = f.userData as { delay: number; dur: number; side: number };
+        const k = ((t + u.delay) % u.dur) / u.dur;
+        f.position.set(0.1 + u.side * 3.2 * k, 1.5 + 5.2 * k - 1.4 * k * k, -0.6 - 2.2 * k);
+        f.rotation.set(0.25 - k * 0.4, u.side * k * 1.6, Math.sin(t * 3 + i) * 0.22);
+        const grow = Math.min(1, k / 0.12), fade = 1 - Math.max(0, (k - 0.78) / 0.22);
+        f.scale.setScalar(Math.max(0.001, grow * fade));
+      });
       if (desk.glow) (desk.glow.material as THREE.MeshStandardMaterial).opacity = 0.4 + Math.sin(t * 2) * 0.15;
     }
     const z = desk.zoom, ang = mouse.x * 0.22 + Math.sin(t * 0.25) * 0.08;
